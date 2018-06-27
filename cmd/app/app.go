@@ -10,7 +10,6 @@ import (
 )
 
 type App struct {
-	dir     string
 	db      data.DB
 	filter  data.Filter
 	records []data.Entity

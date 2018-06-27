@@ -10,10 +10,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/lxn/win"
 	"strconv"
-	"syscall"
 	"time"
+	"github.com/fpawel/ogmvik"
 )
 
 const (
@@ -35,7 +34,7 @@ func main() {
 	x := &App{
 		filter: data.NewFilter(),
 	}
-	x.db, x.dir = data.Open()
+	x.db = data.Open()
 	defer x.db.Close()
 
 	// сделать pipeRunner сервер
@@ -51,7 +50,7 @@ func main() {
 	}
 	defer pipeWriteListener.Close()
 
-	if err := exec.Command(appFolderFileName("ui.exe")).Start(); err != nil {
+	if err := exec.Command(ogmvik.AppFileName("ui.exe")).Start(); err != nil {
 		panic(err)
 	}
 
@@ -193,29 +192,4 @@ func main() {
 
 func intToStr(x interface{}) string {
 	return fmt.Sprintf("%d", x)
-}
-
-func appFolderPath() string {
-	var appDataPath string
-	if appDataPath = os.Getenv("MYAPPDATA"); len(appDataPath) == 0 {
-		var buf [win.MAX_PATH]uint16
-		if !win.SHGetSpecialFolderPath(0, &buf[0], win.CSIDL_APPDATA, false) {
-			panic("SHGetSpecialFolderPath failed")
-		}
-		appDataPath = syscall.UTF16ToString(buf[0:])
-	}
-	appDataPath = filepath.Join(appDataPath, "Аналитприбор", "ogmvik")
-	_, err := os.Stat(appDataPath)
-	if err != nil {
-		if os.IsNotExist(err) { // создать каталог если его нет
-			os.Mkdir(appDataPath, os.ModePerm)
-		} else {
-			panic(err)
-		}
-	}
-	return appDataPath
-}
-
-func appFolderFileName(filename string) string {
-	return filepath.Join(appFolderPath(), filename)
 }

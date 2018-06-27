@@ -5,14 +5,13 @@ import (
 	"encoding/binary"
 	"github.com/boltdb/bolt"
 	"log"
-	"os"
-	"os/user"
 	"path/filepath"
 	"runtime"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+	"github.com/fpawel/ogmvik"
 )
 
 type DB struct {
@@ -28,20 +27,11 @@ func (x DB) Close() error {
 	return x.db.Close()
 }
 
-func Open() (x DB, dataDir string) {
-	usr, err := user.Current()
-	check(err)
-	dataDir = filepath.Join(usr.HomeDir, "ogmvik")
-	_, err = os.Stat(dataDir)
-	if err != nil && os.IsNotExist(err) {
-		check(os.MkdirAll(dataDir, os.ModePerm))
-	}
-
+func Open() (x DB) {
 	x.mx = new(sync.Mutex)
-
-	x.db, err = bolt.Open(filepath.Join(dataDir, "data.db"), 0600, nil)
+	var err error
+	x.db, err = bolt.Open(ogmvik.AppDataFileName("data.db"), 0600, nil)
 	check(err)
-
 	x.update(func(tx *bolt.Tx) {
 		buck := root(tx)
 		if buck == nil {
