@@ -30,7 +30,7 @@ func (x DB) Close() error {
 func Open() (x DB) {
 	x.mx = new(sync.Mutex)
 	var err error
-	dataFileName := ogmvik.AppDataFileName("data.db")
+	dataFileName := ogmvik.AppName.DataFileName("data.db")
 	x.db, err = bolt.Open(dataFileName, 0600, nil)
 	check(err)
 	x.update(func(tx *bolt.Tx) {

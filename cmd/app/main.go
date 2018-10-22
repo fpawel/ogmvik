@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/fpawel/goutils/procmq"
+	"github.com/fpawel/ogmvik"
 	"github.com/fpawel/ogmvik/data"
 	"gopkg.in/natefinch/npipe.v2"
 	"log"
@@ -10,7 +11,6 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/fpawel/ogmvik"
 	"strconv"
 	"time"
 )
@@ -50,7 +50,7 @@ func main() {
 	}
 	defer pipeWriteListener.Close()
 
-	if err := exec.Command(ogmvik.AppFileName("ui.exe")).Start(); err != nil {
+	if err := exec.Command(ogmvik.AppName.FileName("ui.exe")).Start(); err != nil {
 		panic(err)
 	}
 
