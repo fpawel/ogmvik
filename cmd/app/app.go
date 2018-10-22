@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/fpawel/procmq"
+	"github.com/fpawel/goutils/procmq"
 	"strconv"
 )
 

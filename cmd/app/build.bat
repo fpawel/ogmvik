@@ -1,0 +1,1 @@
+go build -o ogmvik.exe -i -ldflags="-H windowsgui"

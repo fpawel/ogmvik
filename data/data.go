@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"github.com/boltdb/bolt"
+	"github.com/fpawel/ogmvik"
 	"log"
 	"path/filepath"
 	"runtime"
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"github.com/fpawel/ogmvik"
 )
 
 type DB struct {
@@ -30,7 +30,8 @@ func (x DB) Close() error {
 func Open() (x DB) {
 	x.mx = new(sync.Mutex)
 	var err error
-	x.db, err = bolt.Open(ogmvik.AppDataFileName("data.db"), 0600, nil)
+	dataFileName := ogmvik.AppDataFileName("data.db")
+	x.db, err = bolt.Open(dataFileName, 0600, nil)
 	check(err)
 	x.update(func(tx *bolt.Tx) {
 		buck := root(tx)

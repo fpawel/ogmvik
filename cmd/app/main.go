@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/fpawel/goutils/procmq"
 	"github.com/fpawel/ogmvik/data"
-	"github.com/fpawel/procmq"
 	"gopkg.in/natefinch/npipe.v2"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/fpawel/ogmvik"
 	"strconv"
 	"time"
-	"github.com/fpawel/ogmvik"
 )
 
 const (
