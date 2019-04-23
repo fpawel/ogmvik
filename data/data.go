@@ -3,8 +3,9 @@ package data
 import (
 	"bytes"
 	"encoding/binary"
+	"github.com/ansel1/merry"
 	"github.com/boltdb/bolt"
-	"github.com/fpawel/ogmvik"
+	"github.com/fpawel/elco/pkg/winapp"
 	"log"
 	"path/filepath"
 	"runtime"
@@ -28,10 +29,14 @@ func (x DB) Close() error {
 }
 
 func Open() (x DB) {
+	folderPath, err := AppDataFolderPath()
+	if err != nil {
+		panic(err)
+	}
+	fileName := filepath.Join(folderPath, "data.db")
+
 	x.mx = new(sync.Mutex)
-	var err error
-	dataFileName := ogmvik.AppName.DataFileName("data.db")
-	x.db, err = bolt.Open(dataFileName, 0600, nil)
+	x.db, err = bolt.Open(fileName, 0600, nil)
 	check(err)
 	x.update(func(tx *bolt.Tx) {
 		buck := root(tx)
@@ -40,6 +45,19 @@ func Open() (x DB) {
 		}
 	})
 	return
+}
+
+func AppDataFolderPath() (string, error) {
+	appDataFolderPath, err := winapp.AppDataFolderPath()
+	if err != nil {
+		return "", merry.Wrap(err)
+	}
+	elcoDataFolderPath := filepath.Join(appDataFolderPath, "ogmvik")
+	err = winapp.EnsuredDirectory(elcoDataFolderPath)
+	if err != nil {
+		return "", merry.Wrap(err)
+	}
+	return elcoDataFolderPath, nil
 }
 
 func (x DB) Records(f Filter) (xs []Entity) {

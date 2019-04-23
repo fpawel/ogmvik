@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/ansel1/merry"
+	"github.com/fpawel/elco/pkg/winapp"
 	"github.com/fpawel/goutils/procmq"
-	"github.com/fpawel/ogmvik"
 	"github.com/fpawel/ogmvik/data"
 	"gopkg.in/natefinch/npipe.v2"
 	"log"
@@ -50,7 +51,9 @@ func main() {
 	}
 	defer pipeWriteListener.Close()
 
-	if err := exec.Command(ogmvik.AppName.FileName("ui.exe")).Start(); err != nil {
+
+
+	if err := runUIApp(); err != nil {
 		panic(err)
 	}
 
@@ -192,4 +195,12 @@ func main() {
 
 func intToStr(x interface{}) string {
 	return fmt.Sprintf("%d", x)
+}
+
+func runUIApp() error {
+	fileName, err := winapp.CurrentDirOrProfileFileName(".ogmvik", "ui.exe")
+	if err != nil {
+		return merry.Wrap(err)
+	}
+	return exec.Command(fileName).Start()
 }
